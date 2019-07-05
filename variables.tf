@@ -1,7 +1,9 @@
 
 variable "aws_account_id" {}
 variable "aws_profile" {}
-variable "aws_region" {}
+variable "aws_region" {
+    default = "eu-west-1"
+}
 
 variable "sns_topic" {
   type        = "string"
