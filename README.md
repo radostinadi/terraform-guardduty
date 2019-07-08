@@ -27,6 +27,14 @@ module "terraform-guardduty" {
 ## Variables
 The following variables can be configured:
 
+| Name | Description | Type | Default | Required |
+|------|-------------|:----:|:-----:|:-----:|
+| aws\_region | Name of the AWS region | string | "eu-west-1" | no |
+| aws\_account\_id | AWS Account ID | string | n/a | yes |
+| aws\_sns\_topic | The name of the SNS topic to send AWS GuardDuty findings. | string | n/a | yes |
+| bucket\_prefix | Bucket for the S3 bucket created for GuardDuty logs | string | GuardDuty | no |
+| guardduty\_manage\_role | Name of the Role which will manage the GuardDuty service | string | "GuardDuty_enable_role"  | no |
+
 ```hcl
 aws_region
 aws_account_id
