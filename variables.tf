@@ -9,14 +9,8 @@ variable "aws_sns_topic" {
   description = "SNS topic where GuardDuty Alerts will be sent"
 }
 
+variable "guardduty_manage_role" {
+}
 variable "bucket_prefix" {
   default = "guardduty"
-}
-
-variable "group_name" {
-  default = "guardduty-admin"
-}
-
-variable "users" {
-  type = "list"
 }

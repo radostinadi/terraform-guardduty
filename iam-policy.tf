@@ -1,7 +1,8 @@
+### IAM Policy needed to enable GuardDuty
 resource "aws_iam_policy" "iam_enable_guardduty" {
-  name        = "iam_enable-guardduty"
+  name        = "iam-enable-guardduty"
   path        = "/"
-  description = "IAM Policy to enable GuardDuty"
+  description = "IAM Permissions to enable GuardDuty"
 
   policy = <<EOF
 {
@@ -39,59 +40,23 @@ resource "aws_iam_policy" "iam_enable_guardduty" {
 EOF
 }
 
-resource "aws_iam_policy" "guardduty_security_bucket" {
-  name        = "guardduty-security-bucket"
-  path        = "/security/"
-  description = "Allows full access to the contents of the guardduty bucket"
+data "aws_iam_policy_document" "guardduty-assume-role-policy" {
+  statement {
+    actions = ["sts:AssumeRole"]
 
-  policy = <<EOF
-{
-  "Version": "2012-10-17",
-  "Statement": [
-    {
-      "Effect": "Allow",
-      "Action": "s3:ListAllMyBuckets",
-      "Resource": "arn:aws:s3:::*"
-    },
-    {
-      "Effect": "Allow",
-      "Action": "s3:*",
-      "Resource": [
-        "${aws_s3_bucket.guard_duty.arn}",
-        "${aws_s3_bucket.guard_duty.arn}/*"
-      ]
+    principals {
+      type        = "Service"
+      identifiers = ["guardduty.amazonaws.com"]
     }
-  ]
+  }
 }
-EOF
-}
-resource "aws_iam_group" "guardduty" {
-  name = "${var.group_name}"
-  path = "/"
+resource "aws_iam_role" "guardduty_manage_role" {
+  name               = "guardduty_manage_role",
+  assume_role_policy = "${data.aws_iam_policy_document.guardduty-assume-role-policy.json}"
 }
 
-resource "aws_iam_group_policy_attachment" "enable" {
-  group      = "${aws_iam_group.guardduty.name}"
+resource "aws_iam_policy_attachment" "guardduty-policy-attach" {
+  name       = "guardduty-policy-attach"
+  roles       = ["${aws_iam_role.guardduty_manage_role.name}"],
   policy_arn = "${aws_iam_policy.iam_enable_guardduty.arn}"
-}
-
-resource "aws_iam_group_policy_attachment" "useS3bucket" {
-  group      = "${aws_iam_group.guardduty.name}"
-  policy_arn = "${aws_iam_policy.guardduty_security_bucket.arn}"
-}
-
-resource "aws_iam_group_policy_attachment" "access" {
-  group      = "${aws_iam_group.guardduty.name}"
-  policy_arn = "arn:aws:iam::aws:policy/AmazonGuardDutyFullAccess"
-}
-
-resource "aws_iam_group_policy_attachment" "s3readonly" {
-  group      = "${aws_iam_group.guardduty.name}"
-  policy_arn = "arn:aws:iam::aws:policy/AmazonS3ReadOnlyAccess"
-}
-
-resource "aws_iam_group_membership" "guardduty" {
-  name  = "guardduty-admin-members"
-  group = "${aws_iam_group.guardduty.name}"
-  users = "${var.users}"
 }
