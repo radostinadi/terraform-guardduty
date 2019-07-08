@@ -1,6 +1,6 @@
 ### IAM Policy needed to enable GuardDuty
 resource "aws_iam_policy" "iam_enable_guardduty" {
-  name        = "iam-enable-guardduty"
+  name        = "IAM-enable-guardduty"
   path        = "/"
   description = "IAM Permissions to enable GuardDuty"
 
