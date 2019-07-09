@@ -13,11 +13,17 @@ resource "aws_sns_topic" "guardduty_sns_topic" {
       "numMinDelayRetries": 0,
       "backoffFunction": "linear"
     },
-    "disableSubscriptionOverrides": false,
-    "defaultThrottlePolicy": {
+      "disableSubscriptionOverrides": false,
+      "defaultThrottlePolicy": {
       "maxReceivesPerSecond": 1
     }
   }
 }
 EOF
+}
+
+resource "aws_sns_topic_subscription" "guardguty_notifications" {
+  topic_arn = "${aws_sns_topic.guardduty_sns_topic.arn}"
+  protocol  = "${var.guardduty_subscription_protocol}"
+  endpoint  = "${var.guardduty_notification_endpoint}"
 }
