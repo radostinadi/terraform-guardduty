@@ -60,3 +60,23 @@ resource "aws_iam_policy_attachment" "guardduty-policy-attach" {
   roles       = ["${aws_iam_role.guardduty_manage_role.name}"],
   policy_arn = "${aws_iam_policy.iam_enable_guardduty.arn}"
 }
+
+### IAM Role for Lambda
+resource "aws_iam_role" "lambda_exec_role" {
+  name = "lambda_exec_role"
+  assume_role_policy = <<EOF
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Action": "sts:AssumeRole",
+      "Principal": {
+        "Service": "lambda.amazonaws.com"
+      },
+      "Effect": "Allow",
+      "Sid": ""
+    }
+  ]
+}
+EOF
+}

@@ -1,25 +1,8 @@
 
 resource "aws_sns_topic" "guardduty_sns_topic" {
-  name = "${var.aws_sns_topic}"
-  delivery_policy = <<EOF
-{
-  "http": {
-    "defaultHealthyRetryPolicy": {
-      "minDelayTarget": 20,
-      "maxDelayTarget": 20,
-      "numRetries": 3,
-      "numMaxDelayRetries": 0,
-      "numNoDelayRetries": 0,
-      "numMinDelayRetries": 0,
-      "backoffFunction": "linear"
-    },
-      "disableSubscriptionOverrides": false,
-      "defaultThrottlePolicy": {
-      "maxReceivesPerSecond": 1
-    }
-  }
-}
-EOF
+  count   = "${var.create_sns_topic ? 1 : 0}"
+  name    = "${var.sns_topic_name}"
+  delivery_policy = "${var.sns_delivery_policy}"
 }
 
 resource "aws_sns_topic_subscription" "guardguty_notifications" {
