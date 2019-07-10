@@ -21,7 +21,7 @@ variable "enable_guardduty_ipset" {
     type        = "string"
     default     = true
 }
-variable "manage_guardduty_policy" {
+variable "manage_guardduty_role" {
     description = "Whether Policies and Roles Permitting access to GuardDuty and S3 will be created"
     type        = "string"
     default     = true
