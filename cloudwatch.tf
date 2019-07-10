@@ -1,7 +1,7 @@
 resource "aws_cloudwatch_event_rule" "guardduty-finding-events" {
   name          = "guardduty-finding-events"
   description   = "Capture AWS GuardDuty event findings"
-  event_pattern = "${file("${path.module}/guardduty-event-pattern.json")}"
+  event_pattern = "${file("${path.module}/template/guardduty-event-pattern.json")}"
 }
 
 resource "aws_cloudwatch_event_target" "sns" {
