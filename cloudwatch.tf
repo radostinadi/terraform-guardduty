@@ -5,6 +5,7 @@ resource "aws_cloudwatch_event_rule" "guardduty-finding-events" {
 }
 
 resource "aws_cloudwatch_event_target" "sns" {
+  count     = "${var.create_sns_topic ? 1 : 0}"
   rule      = "${aws_cloudwatch_event_rule.guardduty-finding-events.name}"
   target_id = "send-to-sns"
   arn       = "${aws_sns_topic.guardduty_sns_topic.arn}"

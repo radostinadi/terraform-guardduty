@@ -2,11 +2,13 @@
 
 Terraform module to enable the AWS GuardDuty service. The module creates the following resources:
 
-- Create AWS Policy to enable GuardDuty and attach to a Role
-- Create AWS Policy for S3logging bucket 
 - Enable AWS GuardDuty
+- Create an S3 bucket for GuardDuty Assets 
 - Set up CloudWatch to capture GuardDuty Events
-- Create an SNS topic for GuardDuty and manage subscription
+- Enable GuardDuty IPList (optional)
+- Create AWS Policies to manage GuardDuty and attach them to a Role (optional)
+- Create an SNS topic for GuardDuty and manage subscription (optional)
+
 
 
 ## Usage
@@ -21,7 +23,10 @@ Sample usage:
 ```hcl
 module "terraform-guardduty" {
   source = "../../modules/terraform-guardduty"
-  aws_sns_topic = <TOPIC NAME>
+  guardduty_enable_ipset = "true"
+  create_sns_topic = "true"
+  sns_topic_name = <TOPIC NAME>
+  manage_guardduty_policy = "true"
 }
 ```
 
@@ -32,19 +37,25 @@ The following variables can be configured:
 |------|-------------|:----:|:-----:|:-----:|
 | aws\_region | Name of the AWS region | string | "eu-west-1" | no |
 | aws\_account\_id | AWS Account ID | string | n/a | yes |
-| aws\_sns\_topic | The name of the SNS topic to send AWS GuardDuty findings. | string | GuardDuty_Notifications | no |
-| bucket\_prefix | Bucket for the S3 bucket created for GuardDuty logs | string | "GuardDuty" | no |
-| guardduty\_manage\_role | Name of the Role which will manage the GuardDuty service | string | "GuardDuty_enable_role"  | no |
+| create\_sns\_topic | Whether an SNS topic will be created | string | "true"  | no |
+| sns\_topic\_name | The name of the SNS topic to send AWS GuardDuty findings. | string | "GuardDuty_Notifications" | no |
+| guardduty\_bucket\_prefix | Bucket for the S3 bucket created for GuardDuty assets | string | "GuardDuty" | no |
+| guardduty\_enable\_ipset | Whether IPSet will be enabled for GuardDuty | string | "false"  | no |
+| guardduty\_role\_name | Name of the Role which will manage the GuardDuty service | string | "GuardDuty_enable_role"  | no |
 | guardduty\_notification\_endpoint | SNS Notification Endpoint | string | n/a  | yes |
 | guardduty\_subscription\_protocol | Protocol for the SNS Subscription | string | n/a  | yes |
 
 ```hcl
 aws_region
 aws_account_id
-aws_sns_topic 
-guardduty_manage_role
-bucket_prefix
+create_sns_topic
+sns_topic_name 
+manage_guardduty_policy
 guardduty_notification_recipient
 guardduty_subscription_protocol
+guardduty_role_name
+guardduty_enable_ipset
+guardduty_bucket_prefix
+
 ```
 
